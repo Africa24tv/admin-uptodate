@@ -68,7 +68,7 @@
             ></textarea>
         </div>
 
-        <div class="bg-white w-full rounded-md shadow-lg px-4 py-2 flex flex-col space-y-2">
+        <div class="bg-white w-full rounded-md px-4 py-2 flex flex-col space-y-2">
             <label class="font-light">Localisation</label>
             <hr class=""/>
             <input type="text" class="p-2" name='location' placeholder="Entrez la localisation de l'évènement... "/>
@@ -76,7 +76,7 @@
     </div>
 
     <div class="flex flex-row space-x-4 m-3">
-        <div class="bg-white shadow-lg rounded-md flex flex-col space-y-4 px-4 pb-2 w-full">
+        <div class="bg-white rounded-md flex flex-col space-y-4 px-4 pb-2 w-full">
             <div class="space-y-2">
                 <label class="font-light">Début de l'Évènements</label>
                 <hr class="" />
@@ -86,7 +86,7 @@
                 <input type="time" name="start_time"class="w-1/2 outline-none cursor-pointer font-light border-l-2 border-gray-600 pl-6"/>
             </div>
         </div>
-        <div class="bg-white shadow-lg rounded-md flex flex-col space-y-4 px-4 pb-2 w-full">
+        <div class="bg-white rounded-md flex flex-col space-y-4 px-4 pb-2 w-full">
             <div class="space-y-2">
                 <label class="font-light">Fin de L'Évènements</label>
                 <hr class="" />
@@ -99,20 +99,20 @@
     </div>
 
     <div class="flex flex-row m-3 space-x-4">
-        <div class="bg-white rounded-md shadow-lg w-1/2 px-4 py-2 flex flex-col space-y-2">
+        <div class="bg-white rounded-md w-1/2 px-4 py-2 flex flex-col space-y-2">
             <label class="font-light">Organisateur</label>
             <hr class=""/>
             <input type="text" class="p-2" name='organisateur'  placeholder="Entrez le nom de l'organisateur... "/>
         </div>
 
-        <div class="bg-white rounded-md shadow-lg w-1/2 px-4 py-2 flex flex-col space-y-2">
+        <div class="bg-white rounded-md w-1/2 px-4 py-2 flex flex-col space-y-2">
             <label class="font-light">Lien</label>
             <hr class=""/>
             <input type="url" class="p-2" name='link' placeholder="Entrez le nom de l'organisateur... "/>
         </div>
     </div>
 
-    <button type="submit" class="bg-blue-300 hover:bg-blue-100 shadow-lg rounded-lg transition duration-400 w-1/6 content-center py-2 m-5 font-bold text-white hover:text-gray-500">
+    <button type="submit" class="bg-blue-300 hover:bg-blue-100 rounded-lg transition duration-400 w-1/6 content-center py-2 m-5 font-bold text-white hover:text-gray-500">
         <i class="far fa-share-square pr-2"></i>
         Publier
     </button>

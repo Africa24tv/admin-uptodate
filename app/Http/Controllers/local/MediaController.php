@@ -143,11 +143,18 @@ class MediaController extends Controller
      */
     public function update(Request $request, Media $media)
     {
-        $media->update([
-            'title' => $request->title,
-        ]);
+        try{
+            $media->update([
+                'title' => $request->title,
+            ]);
 
-        return $this->index();
+            return redirect()->route('medias.index')->with('success', 'Le fichier a été modifié avec succès');
+        }
+        catch (\Exception $e)
+        {
+            return redirect()->back()->with('error', 'Une erreur est survenue lors de la mise à jour du fichier <br>' . $e->getMessage());
+        }
+
     }
 
     /**
@@ -169,46 +176,5 @@ class MediaController extends Controller
         }
 
         return redirect()->back()->with('success', 'Le fichier a été supprimé avec succès');
-    }
-
-    public function youtube()
-    {
-        // $API_key = 'AIzaSyD181_csxai1WVHPAfAsc1V_-Bqaoy-5Bk';
-        // $channelID = 'UC6LtBEBs1POQVdEP5lBjXdQ';
-        // $maxResult = 10;
-
-        // $apiError = 'Video not Found';
-        // try {
-        //     $apiData = @file_get_contents('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId=' . $channelID . '&maxResults=' . $maxResult . '&key=' . $API_key . '');
-
-        //     if ($apiData)
-        //     {
-        //         $videoList = json_decode($apiData);
-        //     }
-        //     else
-        //     {
-        //         throw new Exception('Invalid API key or channel ID.');
-        //     }
-        // }
-
-        // catch (Exception $e)
-        // {
-        //     $apiError = $e->getMessage();
-        // }
-        // dd($videoList);
-
-
-    }
-
-    /**
-     * Handles new video for saving to the database.
-     *
-     * @param VideosRequest $request
-     *
-     * @return $this|\Illuminate\Http\RedirectResponse
-     */
-    public function youtubePost(Media $media)
-    {
-
     }
 }

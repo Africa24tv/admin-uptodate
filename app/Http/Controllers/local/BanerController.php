@@ -40,7 +40,6 @@ class BanerController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         try{
             $path = '';
             if($request->hasFile('fichier'))
@@ -68,13 +67,14 @@ class BanerController extends Controller
                 Storage::disk('public')->delete($baner->path);
             }
             $baner->delete();
+
+            return redirect()->route('baners.index')->with('success', 'Bannieres supprimées avec succès');
         }
         catch(\Exception $e)
         {
             return redirect()->back()->with('error', 'Une erreur est survenue lors de la suppression');
         }
 
-        return redirect()->route('baners.index')->with('success', 'Bannieres supprimées avec succès');
     }
 
     public function baners()

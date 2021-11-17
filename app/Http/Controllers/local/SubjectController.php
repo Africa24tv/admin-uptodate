@@ -130,9 +130,16 @@ class SubjectController extends Controller
 
     public function categories()
     {
-        $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+        try{
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
-        return response()->json($categories);
+            return response()->json($categories);
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', 'Une erreur est survenue lors de la récupération des catégories');
+        }
+
     }
 
     public function subjects()
@@ -142,7 +149,13 @@ class SubjectController extends Controller
 
     public function subjectArticles($id)
     {
-        $subject = Subject::findOrFail($id);
+        try{
+            $subject = Subject::find($id);
+        }
+        catch(\Exception $e)
+        {
+            return response()->json(['error' => 'Le sujet n\'existe pas'], 404);
+        }
 
         $articles = [];
         foreach($subject->posts as $post)
@@ -161,14 +174,29 @@ class SubjectController extends Controller
 
     public function programmesPresentations()
     {
-        $subjects = Subject::whereType_id(Type::whereTitle('programme')->first()->id)->get();
+        try{
+            $subjects = Subject::whereType_id(Type::whereTitle('programme')->first()->id)->get();
 
-        $articles = [];
-        foreach($subjects as $subject)
-        {
-            array_push($articles, $subject->posts->latest('created_at')->first());
+            $posts = [];
+            foreach($subjects as $subject)
+            {
+                array_push($posts, $subject->posts()->latest('created_at')->first());
+            }
+
+            $articles = [];
+            foreach ($posts as $post)
+            {
+                if($post->article && $post->status == 'publié')
+                {
+                    array_push($articles, $post->article);
+                }
+            }
+
+            return response()->json(ArticleResource::collection($articles));
         }
-
-        return response()->json(ArticleResource::collection($articles));
+        catch(\Exception $e)
+        {
+            return response()->json(['error' => 'Une erreur est survenue lors de la récupération des articles']);
+        }
     }
 }

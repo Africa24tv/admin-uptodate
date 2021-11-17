@@ -2,7 +2,7 @@
 
 @section('content')
     <h1 class="text-xl">Édition d'un article</h1>
-    <form action="{{ route('articles.store') }}" method="POST" encType="multipart/form-data">
+    <form action="{{ route('articles.update', $article->id) }}" method="POST" encType="multipart/form-data">
 
         @csrf
 
@@ -21,12 +21,12 @@
         <div class="m-3">
             <textarea class="bg-white rounded-md shadow-sm w-full p-2 outline-none h-18 font-extrabold text-3xl" type="text"
                 id=tilte name=title placeholder="Entrez le titre de l'article ici...." required
-                onChange='autoGrow'>{{ $article->post->title }}</textarea>
+                oninput='autoGrow()'>{{ $article->post->title }}</textarea>
         </div>
 
         <div class="m-3">
             <textarea class="bg-white rounded-md shadow-sm w-full p-2 outline-none h-18" id=resume name=resume
-                placeholder='Entrez votre résumé ici...' onInput='autoGrow'>{{ $article->post->resume }}</textarea>
+                placeholder='Entrez votre résumé ici...' oninput="autoGrow()">{{ $article->post->resume }}</textarea>
         </div>
 
         <div class="bg-white block m-3 space-y-2 rounded-md shadow-sm p-2">
