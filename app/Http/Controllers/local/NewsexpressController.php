@@ -44,6 +44,8 @@ class NewsexpressController extends Controller
                 'title' => $request->title,
                 'body' => $request->body,
             ]);
+
+            return redirect()->route('newsexpresses.index')->with('success', 'newsexpress crée avec succès !');
         }
         catch(\Exception $err)
         {
@@ -52,7 +54,6 @@ class NewsexpressController extends Controller
             return redirect()->route('newsexpresses.create')->with('error', 'Error: '.$err->getMessage().'<br>Old datas: '.json_encode($old_datas));
             // return view('newsexpresses.create', compact('old_datas'));
         }
-        return redirect()->route('newsexpresses.index')->with('success', 'newsexpress crée avec succès !');
     }
 
     /**
@@ -91,13 +92,13 @@ class NewsexpressController extends Controller
                 'title' => $request->title,
                 'body' => $request->body,
             ]);
+
+            return redirect()->route('newsexpresses.show', $newsexpress->id)->with('success', 'Modification éffectué avec succès !');
         }
         catch(\Exception $err)
         {
-            return redirect()->route('newsexpresses.edit', $newsexpress->id)->with('error', 'Error: '.$err->getMessage());
+            return redirect()->back()->with('error', 'Error: '.$err->getMessage());
         }
-
-        return redirect()->route('newsexpresses.show', $newsexpress->id)->with('success', 'Modification éffectué avec succès !');
     }
 
     /**
@@ -110,13 +111,13 @@ class NewsexpressController extends Controller
     {
         try{
             $newsexpress->delete();
+
+            return redirect()->route('newsexpresses.index')->with('success', 'Suppression éffectué avec succès !');
         }
         catch(\Exception $err)
         {
-            return redirect()->route('newsexpresses.index')->with('error', 'Error: '.$err->getMessage());
+            return redirect()->back()->with('error', 'Error: '.$err->getMessage());
         }
-
-        return $this->index();
     }
 
     public function newsExpress()

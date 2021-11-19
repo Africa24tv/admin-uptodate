@@ -4,6 +4,7 @@ namespace App\Http\Controllers\local\accounts;
 
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
@@ -38,9 +39,19 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        Permission::create($request->all());
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:permissions'],
+        ]);
 
-        return $this->index();
+        try{
+            Permission::create($request->all());
+
+            return redirect()->route('permissions.index')->with('success', 'Permission crée avec succès');
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Une erreur est survenue lors de l'enregistrement de la permission");
+        }
     }
 
     /**
@@ -63,9 +74,15 @@ class PermissionController extends Controller
      */
     public function update(Request $request, Permission $permission)
     {
-        $permission->update($request->all());
+        try{
+            $permission->update($request->all());
 
-        return $this->index();
+            return redirect()->route('permissions.index')->with('success', 'Permission modifiée avec succès');
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Une erreur est survenue lors de la modification de la permission");
+        }
     }
 
     /**
@@ -76,8 +93,14 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        $permission->delete();
+        try{
+            $permission->delete();
 
-        return $this->index();
+            return redirect()->route('permissions.index')->with('success', 'Permission supprimée avec succès');
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Une erreur est survenue lors de la suppression de la permission");
+        };
     }
 }

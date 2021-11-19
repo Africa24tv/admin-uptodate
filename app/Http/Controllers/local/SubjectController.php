@@ -35,10 +35,16 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        $types = Type::all();
-        $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+        try{
+            $types = Type::all();
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
-        return view('subjects.create', compact('types', 'categories'));
+            return view('subjects.create', compact('types', 'categories'));
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->route('types.index')->with('error', "Vueillez crée un type avant de crée un sujet !");
+        }
     }
 
     /**

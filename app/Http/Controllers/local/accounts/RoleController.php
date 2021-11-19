@@ -41,11 +41,16 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $role = Role::create($request->only('name'));
+        try{
+            $role = Role::create($request->only('name'));
+            $role->permissions()->attach($request->permissions);
 
-        $role->permissions()->attach($request->permissions);
-
-        return $this->index();
+            return redirect()->route('roles.index')->with('success', 'Role created successfully');
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Role crée avec succès");
+        }
     }
 
     /**
@@ -81,11 +86,17 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
-        $role->permissions()->detach();
+        try{
+            $role->permissions()->detach();
 
-        $role->update($request->only('name'));
+            $role->update($request->only('name'));
 
-        $role->permissions()->attach($request->permissions);
+            $role->permissions()->attach($request->permissions);
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Role mis à jour avec succès");
+        }
 
         return $this->index();
     }
@@ -98,10 +109,12 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $role->permissions()->detach();
-
-        $role->delete();
-
-        return $this->index();
+        try{
+            $role->delete();
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Role supprimé avec succès");
+        }
     }
 }

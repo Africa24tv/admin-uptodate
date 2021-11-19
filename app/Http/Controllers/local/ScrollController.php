@@ -50,12 +50,13 @@ class ScrollController extends Controller
                 'title' => $request->title,
                 'user_id' => Auth::user()->id,
             ]);
-        } catch (\Exception $err) {
+
+            return redirect()->route('scrolls.index')->with('success', 'Scroll crée avec succès');
+        }
+        catch (\Exception $err)
+        {
             return redirect()->back()->with('error', 'Impossible de crée le scroll');
         }
-
-        $scrolls = Scroll::paginate(15);
-        return redirect()->route('scrolls.index')->with('success', 'Scroll crée avec succès');
     }
 
     /**
@@ -78,10 +79,17 @@ class ScrollController extends Controller
      */
     public function update(Request $request, Scroll $scroll)
     {
-        $scroll->update($request->all());
+        try {
+            $scroll->update([
+                'title' => $request->title,
+            ]);
 
-        $scrolls = Scroll::paginate(15);
-        return redirect()->route('scrolls.index')->with('success', 'Scroll modifié avec succès');
+            return redirect()->route('scrolls.index')->with('success', 'Scroll modifié avec succès');
+        }
+        catch (\Exception $err)
+        {
+            return redirect()->back()->with('error', 'Impossible de modifier le scroll');
+        }
     }
 
     /**
@@ -94,7 +102,6 @@ class ScrollController extends Controller
     {
         $scroll->delete();
 
-        $scrolls = Scroll::paginate(15);
         return redirect()->route('scrolls.index')->with('success', 'Scroll supprimé avec succès');
     }
 

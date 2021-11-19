@@ -27,9 +27,8 @@
       <table class="w-full">
         <thead>
           <tr class="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
-            <th class="text-center">N°</th>
-            <th class="px-4 py-3">Titre</th>
-            <th class="px-4 py-3">Contenu</th>
+            <th class="text-center px-4">N°</th>
+            <th class="px-4 py-3 w-full">Titre</th>
             <th class="px-4 py-3">actions</th>
           </tr>
         </thead>
@@ -43,7 +42,6 @@
                             {{ $newsexpress->title }}
                         </div>
                     </td>
-                    <td class="px-4 py-3 text-ms font-semibold border">{{ $newsexpress->body}}</td>
 
                     <td class="px-4 py-3 text-sm border text-center">
                         <div class="justify-center">

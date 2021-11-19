@@ -166,6 +166,8 @@ return [
          * Package Service Providers...
          */
 
+        'Intervention\Image\ImageServiceProvider',
+
         /*
          * Application Service Providers...
          */
@@ -228,7 +230,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Youtube' => Dawson\Youtube\Facades\Youtube::class,
+        'Image' => 'Intervention\Image\Facades\Image',
 
     ],
 

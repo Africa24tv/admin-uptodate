@@ -101,7 +101,7 @@
                     <span class="inline-flex justify-center items-center ml-4">
                         <i class="fas fa-layer-group"></i>
                     </span>
-                    <span class="ml-2 text-sm tracking-wide truncate">newsExpress</span>
+                    <span class="ml-2 text-sm tracking-wide truncate">NewsExpress</span>
                 </div>
                 </a>
             </li>
@@ -109,7 +109,7 @@
             @endcan
 
             @can('list-articles')
-            <li>
+            <li class="nav-item {{ request()->is('articles') ? 'active' : ''}}">
                 <a href="{{ route('articles.index') }}">
                 <div
                     class="relative flex flex-row items-center h-11 focus:outline-none hover:bg-gray-50 text-gray-600 hover:text-gray-800 border-l-4 border-transparent hover:border-indigo-500 pr-6">

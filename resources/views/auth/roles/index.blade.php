@@ -1,7 +1,7 @@
 @extends('master.main')
 
 @section('content')
-<h1>Liste des utilisateurs</h1>
+<h1>Liste des Rôles</h1>
 <section class="container mx-auto p-6 font-mono">
   <div class="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
 
@@ -18,7 +18,7 @@
       <table class="w-full">
         <thead>
           <tr class="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
-            <th class="text-center">N°</th>
+            <th class="text-center px-4">N°</th>
             <th class="px-4 w-2/6 py-3">Titre</th>
             <th class="px-4 py-3">Permissions</th>
             <th class="px-4 w-1/12 py-3">actions</th>
@@ -42,7 +42,7 @@
                         </ul>
                     </td>
 
-                    <td class="px-4 py-3 text-sm border text-center">
+                    <td class="px-4 py-3 text-sm border ">
                         <div class="flex flex-row space-x-4">
                             <form action="{{ route('roles.destroy', $role->id) }}" method="post">
                                 @method('DELETE')

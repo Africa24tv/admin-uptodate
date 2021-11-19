@@ -30,9 +30,16 @@ class EventController extends Controller
      */
     public function create()
     {
-        $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+        try{
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
-        return view('posts.events.create', compact('categories'));
+            return view('posts.events.create', compact('categories'));
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->route('subjects.index')->with('error', "Veuillez créer un sujet !");
+        }
+
     }
 
     /**

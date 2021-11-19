@@ -28,17 +28,21 @@ class ArticleController extends Controller
     {
         $articles = [];
 
-        if(Gate::allows('list-articles'))
-        {
-            $articles = Article::articlesEnvoyer()->latest('articles.created_at')->paginate(15);
+        if (Gate::allows('list-articles')) {
+            $articles = Article::latest('articles.created_at')->paginate(15);
         }
 
-        if (Gate::allows('list-mes-articles'))
-        {
+        if (Gate::allows('list-mes-articles')) {
             $articles = Article::userArticles(Auth::user())->latest('articles.created_at')->paginate(15);
         }
+        try{
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
-        $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+        }
+        catch(\Exception $e)
+        {
+            $categories = [];
+        }
 
         // dd($articles);
 
@@ -52,9 +56,15 @@ class ArticleController extends Controller
      */
     public function create()
     {
+        try{
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+            // $categories = Subject::all();
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->route('subjects.index')->with('error', 'Vous devez créer une catégorie avant de créer un article');
+        }
         $subjects = Subject::all();
-        $categories = Subject::all();
-
 
         return view('posts.articles.create', compact('subjects', 'categories'));
     }
@@ -69,30 +79,29 @@ class ArticleController extends Controller
     {
         $creator = new PostController();
 
-        try{
+        try {
             $post = $creator->store($request);
         }
-        catch(\Exception $e)
+        catch (\Exception $e)
         {
             return redirect()->back()->with('error', $e->getMessage());
         }
 
-        try{
+        try {
             Article::create([
                 'id' => $post->id,
                 'type' => $post->type,
                 'body' => $request->content,
                 'media_id' => $request->media,
             ]);
+
+            return redirect()->route('articles.index')->with('success', 'L\'article a été créé avec succès');
         }
-        catch(\Exception $e)
-        {
+        catch (\Exception $e) {
             $post->delete();
 
             return redirect()->route('articles.create')->with('error', 'Une erreur est survenue lors de la création de l\'article');
         }
-
-        return redirect()->route('articles.index')->with('success', 'L\'article a été créé avec succès');
     }
 
     /**
@@ -114,8 +123,14 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
+        try{
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->route('subjects.index')->with('error', "Veuillez crée un sujet !");
+        }
         $subjects = Subject::all();
-        $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
         return view('posts.articles.edit', compact('article', 'subjects', 'categories'));
     }
@@ -129,11 +144,17 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        $updater = new PostController();
+        try{
+            $updater = new PostController();
 
-        $updater->update($request, $article->post);
+            $updater->update($request, $article->post);
 
-        $article->update($request->all());
+            $article->update($request->all());
+        }
+        catch(\Exception $e)
+        {
+            return redirect()->back()->with('error', "Impossible de modifier cet article");
+        }
 
         return redirect()->route('articles.index')->with('success', 'L\'article a été modifié avec succès');
     }
@@ -152,48 +173,32 @@ class ArticleController extends Controller
         return redirect()->route('articles.index')->with('success', 'L\'article a été supprimé avec succès');
     }
 
-    protected function cleanImageInHtmlDoc($content)
-    {
-        $dom = new \DomDocument();
-
-        @$dom->loadHtml($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
-        $images = $dom->getElementsByTagName('img');
-
-        foreach ($images as $k => $img) {
-
-            $data = $img->getAttribute('src');
-
-            list($type, $data) = explode(';', $data);
-
-            list($type, $data) = explode(',', $data);
-
-            $data = base64_decode($data);
-
-            $image_name = "/uploads/images/" . time() . $k . '.png';
-
-            $path = public_path() . $image_name;
-
-            file_put_contents($path, $data);
-
-            $img->removeAttribute('src');
-
-            $img->setAttribute('src', $image_name);
-        }
-
-        return $dom->saveHTML();
-    }
-
     public function articlesPubliers()
     {
         $publish_articles = [];
-        $articles = Article::latest()->get();
+        $articles = Article::with('post')
+            ->when(
+                request('title'),
+                fn ($query) =>
+                $query->whereHas('post', fn ($query) =>
+                    $query->whereTitle('LIKE', '%'.request('title').'%')
+                )
+            )
+            ->when(
+                request('subject'),
+                fn ($query) =>
+                $query->whereRelation('post', fn ($query) =>
+                    $query->whereHas('subject', fn ($query) =>
+                        $query->whereId(request('subject'))
+                    )
+                )
+            )
+            ->latest()
+            ->get();
 
 
-        foreach($articles as $article)
-        {
-            if($article->post->status == 'publié')
-            {
+        foreach ($articles as $article) {
+            if ($article->post->status == 'publié') {
                 array_push($publish_articles, $article);
             }
         }
@@ -202,25 +207,20 @@ class ArticleController extends Controller
 
     public function article($id)
     {
-        try
-        {
+        try {
             $article = Article::find($id);
             $other_posts = $article->post->subject->posts()->limit(4)->get();
 
             $articles = [];
-            foreach($other_posts as $post)
-            {
-                if($post->article && $post->article->id != $article->id)
-                {
+            foreach ($other_posts as $post) {
+                if ($post->article && $post->article->id != $article->id) {
                     $post->status == 'publié' ?
-                    array_push($articles, $post->article)
-                    :
-                    null;
+                        array_push($articles, $post->article)
+                        :
+                        null;
                 }
             }
-        }
-        catch(\Exception $err)
-        {
+        } catch (\Exception $err) {
             return response(null);
         }
 

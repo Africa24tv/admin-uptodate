@@ -11,12 +11,15 @@
                 name=name
                 placeholder="Entrez le titre du permission ici...."
                 required
-                onChange='autoGrow'
             >{{ $permission->name }}</textarea>
         </div>
         <button type="submit" class="bg-blue-300 hover:bg-blue-100 shadow-lg rounded-lg transition duration-400 w-1/6 content-center py-2 m-5 font-bold text-white hover:text-gray-500">
             <i class="far fa-share-square pr-2"></i>
             Mise à jour
+        </button>
+        <button onclick="window.location='{{ url()->previous() }}'" class="bg-red-300 hover:bg-red-100 shadow-lg rounded-lg transition duration-400 w-1/6 content-center py-2 m-5 font-bold text-white hover:text-gray-500">
+            <i class="fas fa-trash-alt pr-2"></i>
+            Annuler
         </button>
     </form>
 @endsection
