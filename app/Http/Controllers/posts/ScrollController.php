@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers\posts;
 
 use App\Models\Scroll;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ScrollResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\ScrollResource;
 
 class ScrollController extends Controller
 {
@@ -48,6 +48,7 @@ class ScrollController extends Controller
         try {
             Scroll::create([
                 'title' => $request->title,
+                'slug' => str_slug($request->title),
                 'user_id' => Auth::user()->id,
             ]);
 

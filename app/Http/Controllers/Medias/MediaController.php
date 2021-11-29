@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers\Medias;
 
 use App\Models\Media;
 use Illuminate\Http\Request;
-use Dawson\Youtube\Facades\Youtube;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -77,59 +76,7 @@ class MediaController extends Controller
                     'user_id' => Auth::user()->id,
                 ]);
 
-                // $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
-
-                // if (!$receiver->isUploaded()) {
-                //     // file not uploaded
-                // }
-
-                // $fileReceived = $receiver->receive(); // receive file
-                // if ($fileReceived->isFinished()) { // file uploading is complete / all chunks are uploaded
-                //     $file = $fileReceived->getFile(); // get file
-                //     $extension = $file->getClientOriginalExtension();
-                //     $fileName = str_replace('.' . $extension, '', $file->getClientOriginalName()); //file name without extenstion
-                //     $fileName .= '_' . md5(time()) . '.' . $extension; // a unique file name
-
-                //     $disk = Storage::disk(config('filesystems.default'));
-                //     $path = $disk->putFileAs('videos', $file, $fileName);
-
-                //     // delete chunked file
-                //     unlink($file->getPathname());
-                //     return [
-                //         'path' => asset('storage/' . $path),
-                //         'filename' => $fileName
-                //     ];
-                // }
-
-                // // otherwise return percentage information
-                // $handler = $fileReceived->handler();
-                // return [
-                //     'done' => $handler->getPercentageDone(),
-                //     'status' => true
-                // ];
-
-                //----------------------------------------------------------
-
-                // $channelId = "";
-                // $API_key = "";
-
-                // $target_url = 'https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId=' . $channelId . '&key=' . $API_key . '';
-                // $dir = Storage::url($media->path);
-
-                // $cFile = curl_file_create($dir, 'video/mp4');
-                // $post = [
-                //     'title' => $media->title,
-                //     'description' => $media->description,
-                //     'file' => $cFile,
-                // ];
-
-                // $ch = curl_init();
-                // curl_setopt($ch, CURLOPT_URL, $target_url);
-                // curl_setopt($ch, CURLOPT_POST, 1);
-                // curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-                // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                // $result = json_decode(curl_exec($ch));
-                // curl_close($ch);
+                return redirect()->route('medias.index')->with('success', 'Le fichier a été enregistré avec succès');
             }
             catch (\Exception $e)
             {
@@ -138,8 +85,6 @@ class MediaController extends Controller
 
                 return redirect()->back()->with('error', 'Une erreur est survenue lors de l\'enregistrement du fichier <br>' . $e->getMessage());
             }
-
-            return redirect()->route('medias.index')->with('success', 'Le fichier a été enregistré avec succès');
         }
         return redirect()->back()->with('error', 'Veuillez sélectionner un fichier');
     }
@@ -152,7 +97,7 @@ class MediaController extends Controller
      */
     public function show(Media $media)
     {
-        // return view('medias.show', compact('media'));
+        return view('medias.show', compact('media'));
     }
 
     /**

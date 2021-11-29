@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Type;
+use App\Models\Subject;
+use Illuminate\Http\Request;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\SubjectResource;
-use App\Models\Subject;
-use App\Models\Type;
-use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
@@ -35,14 +34,12 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        try{
+        try {
             $types = Type::all();
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
             return view('subjects.create', compact('types', 'categories'));
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->route('types.index')->with('error', "Vueillez crée un type avant de crée un sujet !");
         }
     }
@@ -57,9 +54,10 @@ class SubjectController extends Controller
     {
         Subject::create([
             'title' => $request->title,
+            'slug' => str_slug($request->title),
             'type_id' => $request->type,
             'resume' => $request->resume,
-         ]);
+        ]);
 
         return redirect()->route('subjects.index')->with('success', 'Le sujet a été créé avec succès');
     }
@@ -72,7 +70,6 @@ class SubjectController extends Controller
      */
     public function show(Subject $subject)
     {
-
     }
 
     /**
@@ -83,10 +80,14 @@ class SubjectController extends Controller
      */
     public function edit(Subject $subject)
     {
-        $types = Type::all();
-        $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+        try {
+            $types = Type::all();
+            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
-        return view('subjects.edit', compact('subject', 'types', 'categories'));
+            return view('subjects.edit', compact('subject', 'types', 'categories'));
+        } catch (\Exception $e) {
+            return redirect()->route('types.index')->with('error', "Vueillez crée un type avant de crée un sujet !");
+        }
     }
 
     /**
@@ -98,16 +99,14 @@ class SubjectController extends Controller
      */
     public function update(Request $request, Subject $subject)
     {
-        try{
+        try {
             $subject->update([
                 'title' => $request->title,
+                'slug' => str_slug($request->title),
                 'type_id' => $request->type,
                 'resume' => $request->resume,
             ]);
-        }
-
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur lors de la modification du sujet');
         }
 
@@ -122,12 +121,9 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
-        try
-        {
+        try {
             $subject->delete();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Impossible de supprimer ce sujet');
         }
 
@@ -136,16 +132,13 @@ class SubjectController extends Controller
 
     public function categories()
     {
-        try{
+        try {
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
             return response()->json($categories);
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Une erreur est survenue lors de la récupération des catégories');
         }
-
     }
 
     public function subjects()
@@ -155,19 +148,15 @@ class SubjectController extends Controller
 
     public function subjectArticles($id)
     {
-        try{
+        try {
             $subject = Subject::find($id);
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Le sujet n\'existe pas'], 404);
         }
 
         $articles = [];
-        foreach($subject->posts as $post)
-        {
-            if($post->article && $post->status == 'publié')
-            {
+        foreach ($subject->posts as $post) {
+            if ($post->article && $post->status == 'publié') {
                 array_push($articles, $post->article);
             }
         }
@@ -180,28 +169,51 @@ class SubjectController extends Controller
 
     public function programmesPresentations()
     {
-        try{
+        try {
             $subjects = Subject::whereType_id(Type::whereTitle('programme')->first()->id)->get();
 
             $posts = [];
-            foreach($subjects as $subject)
-            {
+            foreach ($subjects as $subject) {
                 array_push($posts, $subject->posts()->latest('created_at')->first());
             }
 
             $articles = [];
-            foreach ($posts as $post)
-            {
-                if($post->article && $post->status == 'publié')
-                {
+            foreach ($posts as $post) {
+                if ($post->article && $post->status == 'publié') {
                     array_push($articles, $post->article);
                 }
             }
 
             return response()->json(ArticleResource::collection($articles));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Une erreur est survenue lors de la récupération des articles']);
         }
-        catch(\Exception $e)
-        {
+    }
+
+    public function regions()
+    {
+        try {
+            $subjects = Subject::whereType_id(Type::whereTitle('region')->first()->id)
+                ->when(
+                    request('subject_slug'),
+                    fn ($query) => $query->whereSlug(request('subject_slug'))
+                )
+                ->get();
+
+            $posts = [];
+            foreach ($subjects as $subject) {
+                array_push($posts, $subject->posts()->latest('created_at')->first());
+            }
+
+            $articles = [];
+            foreach ($posts as $post) {
+                if ($post->article && $post->status == 'publié') {
+                    array_push($articles, $post->article);
+                }
+            }
+
+            return response()->json(ArticleResource::collection($articles));
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Une erreur est survenue lors de la récupération des articles']);
         }
     }

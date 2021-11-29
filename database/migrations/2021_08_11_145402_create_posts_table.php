@@ -17,6 +17,7 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
+            $table->string('slug')->unique();
             $table->string('image')->nullable();
             $table->longText('resume')->nullable();
             $table->foreignId('subject_id')->nullable()->constrained()->onDelete('cascade'); #sogner a retier le nullable

@@ -45,4 +45,10 @@ class Article extends Post
         return Article::join('posts', 'articles.id', 'posts.id')
                 ->whereStatus('envoyé');
     }
+
+    static public function hotArticles()
+    {
+        return Article::join('posts', 'articles.id', 'posts.id')
+                ->whereStatus('recu');
+    }
 }

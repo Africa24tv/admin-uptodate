@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Type;
 use Illuminate\Http\Request;
 
@@ -43,7 +42,12 @@ class TypeController extends Controller
      */
     public function store(Request $request)
     {
-        Type::create($request->all());
+        try{
+            Type::create($request->all());
+        }
+        catch(\Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         return redirect()->route('types.index')->with('success', 'Type créé avec succès !');
     }

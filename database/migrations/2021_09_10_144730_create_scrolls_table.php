@@ -16,6 +16,7 @@ class CreateScrollsTable extends Migration
         Schema::create('scrolls', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
+            $table->string('slug')->unique();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('restrict');
             $table->timestamps();
         });

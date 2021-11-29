@@ -17,6 +17,7 @@ class CreateMediaTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('path');
+            $table->string('youtube_video_id')->default(null)->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });

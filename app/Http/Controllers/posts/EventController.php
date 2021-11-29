@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\local\posts;
+namespace App\Http\Controllers\posts;
 
 use App\Models\Type;
 use App\Models\Event;
@@ -30,16 +30,13 @@ class EventController extends Controller
      */
     public function create()
     {
-        try{
+        try {
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
 
             return view('posts.events.create', compact('categories'));
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->route('subjects.index')->with('error', "Veuillez créer un sujet !");
         }
-
     }
 
     /**
@@ -51,7 +48,7 @@ class EventController extends Controller
     public function store(Request $request)
     {
 
-        try{
+        try {
             $creator = new PostController();
 
             $post = $creator->store($request);
@@ -66,9 +63,7 @@ class EventController extends Controller
                 'location' => $request->location,
                 'organisateur' => $request->organisateur,
             ]);
-
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur lors de l\'enregistrement !');
         }
 
@@ -108,7 +103,7 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        try{
+        try {
             // $creator = new PostController();
 
             // $post = $creator->update($request, $event);
@@ -123,9 +118,7 @@ class EventController extends Controller
                 'location' => $request->location,
                 'organisateur' => $request->organisateur,
             ]);
-
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur lors de la modification !');
         }
 
@@ -140,11 +133,10 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        try{
+        try {
             $event->post->delete();
             $event->delete();
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Erreur lors de la suppression !');
         }
 

@@ -16,6 +16,7 @@ class CreateSubjectsTable extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
+            $table->string('slug')->unique();
             $table->text('resume')->nullable();
             $table->foreignId('type_id')->constrained();
             $table->foreignId('subject_id')->nullable()->constrained()->onDelete('restrict');

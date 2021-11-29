@@ -12,6 +12,7 @@ class Media extends Model
     protected $fillable = [
         'title',
         'path',
+        'youtube_video_id',
         'user_id',
     ];
 

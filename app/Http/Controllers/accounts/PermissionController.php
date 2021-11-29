@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\local\accounts;
+namespace App\Http\Controllers\accounts;
 
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
@@ -101,6 +101,6 @@ class PermissionController extends Controller
         catch(\Exception $e)
         {
             return redirect()->back()->with('error', "Une erreur est survenue lors de la suppression de la permission");
-        };
+        }
     }
 }

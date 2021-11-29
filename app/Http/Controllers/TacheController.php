@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Tache;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -58,14 +57,19 @@ class TacheController extends Controller
      */
     public function store(Request $request)
     {
-        $tache = Tache::create([
-            'title' => $request->title,
-            'level' => $request->level,
-            'user_id' => Auth::user()->id,
-            'body' => $request->resume,
-        ]);
+        try{
+            $tache = Tache::create([
+                'title' => $request->title,
+                'level' => $request->level,
+                'user_id' => Auth::user()->id,
+                'body' => $request->resume,
+            ]);
 
-        $tache->acteurs()->attach($request->users);
+            $tache->acteurs()->attach($request->users);
+        } catch(\Exception $e) {
+            return redirect()->back()->with('error', 'Une erreur est survenue lors de la création de la tâche');
+        }
+
 
         return redirect()->route('taches.index')->with('success', 'Tâche créée avec succès');
     }
@@ -105,7 +109,6 @@ class TacheController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
         $tache = Tache::find($id);
 
         if (Gate::allows('edit-execution')) {

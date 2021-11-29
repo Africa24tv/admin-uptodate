@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers\posts;
 
 use App\Models\Newsexpress;
 use Illuminate\Http\Request;
@@ -39,19 +39,18 @@ class NewsexpressController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
             Newsexpress::create([
                 'title' => $request->title,
+                'slug' => str_slug($request->title),
                 'body' => $request->body,
             ]);
 
             return redirect()->route('newsexpresses.index')->with('success', 'newsexpress crée avec succès !');
-        }
-        catch(\Exception $err)
-        {
+        } catch (\Exception $err) {
             $old_datas = $request->all();
 
-            return redirect()->route('newsexpresses.create')->with('error', 'Error: '.$err->getMessage().'<br>Old datas: '.json_encode($old_datas));
+            return redirect()->route('newsexpresses.create')->with('error', 'Error: ' . $err->getMessage() . '<br>Old datas: ' . json_encode($old_datas));
             // return view('newsexpresses.create', compact('old_datas'));
         }
     }
@@ -87,17 +86,16 @@ class NewsexpressController extends Controller
      */
     public function update(Request $request, Newsexpress $newsexpress)
     {
-        try{
+        try {
             $newsexpress->update([
                 'title' => $request->title,
+                'slug' => str_slug($request->title),
                 'body' => $request->body,
             ]);
 
             return redirect()->route('newsexpresses.show', $newsexpress->id)->with('success', 'Modification éffectué avec succès !');
-        }
-        catch(\Exception $err)
-        {
-            return redirect()->back()->with('error', 'Error: '.$err->getMessage());
+        } catch (\Exception $err) {
+            return redirect()->back()->with('error', 'Error: ' . $err->getMessage());
         }
     }
 
@@ -109,14 +107,12 @@ class NewsexpressController extends Controller
      */
     public function destroy(Newsexpress $newsexpress)
     {
-        try{
+        try {
             $newsexpress->delete();
 
             return redirect()->route('newsexpresses.index')->with('success', 'Suppression éffectué avec succès !');
-        }
-        catch(\Exception $err)
-        {
-            return redirect()->back()->with('error', 'Error: '.$err->getMessage());
+        } catch (\Exception $err) {
+            return redirect()->back()->with('error', 'Error: ' . $err->getMessage());
         }
     }
 

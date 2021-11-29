@@ -16,6 +16,7 @@ class CreateNewsexpressesTable extends Migration
         Schema::create('newsexpresses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('slug')->unique();
             $table->text('body');
             $table->foreignId('user_id')->nullable()->default(null)->constrained();
             $table->timestamps();

@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Article;
 use App\Models\Event;
 use App\Models\Tache;
+use App\Models\Article;
 
 class DashboardController extends Controller
 {

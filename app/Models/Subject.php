@@ -11,6 +11,7 @@ class Subject extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'resume',
         'type_id',
         'subject_id',

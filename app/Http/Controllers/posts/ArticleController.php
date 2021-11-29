@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\local\posts;
+namespace App\Http\Controllers\posts;
 
 use App\Models\Post;
 use App\Models\Type;
@@ -8,9 +8,9 @@ use App\Models\Article;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ArticleResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Resources\ArticleResource;
 
 class ArticleController extends Controller
 {
@@ -35,16 +35,11 @@ class ArticleController extends Controller
         if (Gate::allows('list-mes-articles')) {
             $articles = Article::userArticles(Auth::user())->latest('articles.created_at')->paginate(15);
         }
-        try{
+        try {
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
-
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             $categories = [];
         }
-
-        // dd($articles);
 
         return view('posts.articles.index', compact('articles', 'categories'));
     }
@@ -56,12 +51,10 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        try{
+        try {
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
             // $categories = Subject::all();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->route('subjects.index')->with('error', 'Vous devez créer une catégorie avant de créer un article');
         }
         $subjects = Subject::all();
@@ -81,9 +74,7 @@ class ArticleController extends Controller
 
         try {
             $post = $creator->store($request);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
 
@@ -96,8 +87,7 @@ class ArticleController extends Controller
             ]);
 
             return redirect()->route('articles.index')->with('success', 'L\'article a été créé avec succès');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             $post->delete();
 
             return redirect()->route('articles.create')->with('error', 'Une erreur est survenue lors de la création de l\'article');
@@ -123,11 +113,9 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        try{
+        try {
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->route('subjects.index')->with('error', "Veuillez crée un sujet !");
         }
         $subjects = Subject::all();
@@ -144,15 +132,13 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        try{
+        try {
             $updater = new PostController();
 
             $updater->update($request, $article->post);
 
             $article->update($request->all());
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             return redirect()->back()->with('error', "Impossible de modifier cet article");
         }
 
@@ -180,15 +166,21 @@ class ArticleController extends Controller
             ->when(
                 request('title'),
                 fn ($query) =>
-                $query->whereHas('post', fn ($query) =>
-                    $query->whereTitle('LIKE', '%'.request('title').'%')
+                $query->whereHas(
+                    'post',
+                    fn ($query) =>
+                    $query->whereTitle('LIKE', '%' . request('title') . '%')
                 )
             )
             ->when(
                 request('subject'),
                 fn ($query) =>
-                $query->whereRelation('post', fn ($query) =>
-                    $query->whereHas('subject', fn ($query) =>
+                $query->whereRelation(
+                    'post',
+                    fn ($query) =>
+                    $query->whereHas(
+                        'subject',
+                        fn ($query) =>
                         $query->whereId(request('subject'))
                     )
                 )
@@ -230,5 +222,9 @@ class ArticleController extends Controller
             'article' => new ArticleResource($article),
             'articles' => ArticleResource::collection($articles),
         ]);
+    }
+
+    function hotArticles()
+    {
     }
 }

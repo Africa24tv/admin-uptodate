@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\local\BanerController;
-use App\Http\Controllers\local\NewsexpressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\local\posts\EventController;
-use App\Http\Controllers\local\posts\ArticleController;
-use App\Http\Controllers\local\ScrollController;
-use App\Http\Controllers\local\SubjectController;
+use App\Http\Controllers\BanerController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\posts\EventController;
+use App\Http\Controllers\posts\ScrollController;
+use App\Http\Controllers\posts\ArticleController;
+use App\Http\Controllers\posts\NewsexpressController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +44,7 @@ Route::get('subject/{id}/events', [SubjectController::class, 'subjectEvents']);
 Route::get('programmes/presentations', [SubjectController::class, 'programmesPresentations']);
 
 Route::get('newsexpresses', [NewsexpressController::class, 'newsExpress']);
+
+Route::get('regions', [SubjectController::class, 'regions']);
 
 Route::get('baners', [BanerController::class, 'baners']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\local\posts;
+namespace App\Http\Controllers\posts;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -18,25 +18,27 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate(
+            [
                 'title' => ['required', 'string'],
                 'fichier' => ['required'],
             ],
             [
                 'title.required' => "Le titre est requis !",
                 'fichier.required' => "Le ficheir est requis !",
-        ]);
+            ]
+        );
 
         // stockage de l'image et récuperation de son lien
         $path = null;
-        if ($request->hasFile('fichier'))
-        {
+        if ($request->hasFile('fichier')) {
             $path = time() . "." . $request->fichier->extension();
             $path = $request->fichier->storeAs('images', $path, 'public');
         }
 
         $post = Post::create([
             'title' => $request->title,
+            'slug' => str_slug($request->title),
             'image' => $path,
             'resume' => $request->resume,
             'subject_id' => $request->subject,
@@ -68,8 +70,7 @@ class PostController extends Controller
                 'status' => 'publié',
                 'validator_id' => Auth::user()->id,
             ]);
-        }
-        else{
+        } else {
             $post->update([
                 'status' => 'envoyé',
             ]);

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\local;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Resources\BanerResource;
 use App\Models\Baner;
 use Illuminate\Http\Request;
