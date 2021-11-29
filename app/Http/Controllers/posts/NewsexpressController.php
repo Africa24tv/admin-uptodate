@@ -4,6 +4,7 @@ namespace App\Http\Controllers\posts;
 
 use App\Models\Newsexpress;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Slug;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NewsExpressResource;
 
@@ -42,7 +43,7 @@ class NewsexpressController extends Controller
         try {
             Newsexpress::create([
                 'title' => $request->title,
-                'slug' => str_slug($request->title),
+                'slug' => Slug::str_slug($request->title),
                 'body' => $request->body,
             ]);
 
@@ -89,7 +90,7 @@ class NewsexpressController extends Controller
         try {
             $newsexpress->update([
                 'title' => $request->title,
-                'slug' => str_slug($request->title),
+                'slug' => Slug::str_slug($request->title),
                 'body' => $request->body,
             ]);
 

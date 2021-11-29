@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Type;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Slug;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\SubjectResource;
 
@@ -12,7 +13,7 @@ class SubjectController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->except(['index', 'categories', 'subjects', 'subjectArticles', 'programmesPresentations']);
+        $this->middleware('auth')->except(['index', 'categories', 'subjects', 'subjectArticles', 'programmesPresentations', 'regions']);
     }
 
     /**
@@ -54,7 +55,7 @@ class SubjectController extends Controller
     {
         Subject::create([
             'title' => $request->title,
-            'slug' => str_slug($request->title),
+            'slug' => Slug::str_slug($request->title),
             'type_id' => $request->type,
             'resume' => $request->resume,
         ]);
@@ -102,7 +103,7 @@ class SubjectController extends Controller
         try {
             $subject->update([
                 'title' => $request->title,
-                'slug' => str_slug($request->title),
+                'slug' => Slug::str_slug($request->title),
                 'type_id' => $request->type,
                 'resume' => $request->resume,
             ]);
@@ -214,7 +215,10 @@ class SubjectController extends Controller
 
             return response()->json(ArticleResource::collection($articles));
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Une erreur est survenue lors de la récupération des articles']);
+            return response()->json([
+                'error' => 'Une erreur est survenue lors de la récupération des articles',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

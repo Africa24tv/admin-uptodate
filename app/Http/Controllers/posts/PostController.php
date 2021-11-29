@@ -4,9 +4,12 @@ namespace App\Http\Controllers\posts;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Slug;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+
+include '../functions.php';
 
 class PostController extends Controller
 {
@@ -38,7 +41,7 @@ class PostController extends Controller
 
         $post = Post::create([
             'title' => $request->title,
-            'slug' => str_slug($request->title),
+            'slug' => Slug::str_slug($request->title),
             'image' => $path,
             'resume' => $request->resume,
             'subject_id' => $request->subject,
