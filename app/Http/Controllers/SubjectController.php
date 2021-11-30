@@ -13,7 +13,12 @@ class SubjectController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->except(['index', 'categories', 'subjects', 'subjectArticles', 'programmesPresentations', 'regions']);
+        $this->middleware('auth')->except([
+            'index', 'categories',
+            'subjects', 'subjectArticles',
+            'programmesPresentations', 'regions',
+            'allRegion', 'region',
+        ]);
     }
 
     /**
@@ -194,26 +199,41 @@ class SubjectController extends Controller
     public function regions()
     {
         try {
-            $subjects = Subject::whereType_id(Type::whereTitle('region')->first()->id)
-                ->when(
-                    request('subject_slug'),
-                    fn ($query) => $query->whereSlug(request('subject_slug'))
-                )
-                ->get();
+            $subjects = Subject::whereType_id(Type::whereTitle('region')->first()->id)->get();
 
+            return response()->json($subjects);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Une erreur est survenue lors de la récupération des régions']);
+        }
+    }
+
+    public function region($slug)
+    {
+        try {
+            $subject = Subject::whereSlug($slug)->first();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'La région n\'existe pas'], 404);
+        }
+
+        try {
             $posts = [];
-            foreach ($subjects as $subject) {
-                array_push($posts, $subject->posts()->latest('created_at')->first());
+            foreach ($subject->posts()->latest('created_at')->limit(5)->get() as $post) {
+                if ($post->article && $post->status == 'publié') {
+                    array_push($posts, $post->article);
+                }
             }
 
             $articles = [];
             foreach ($posts as $post) {
-                if ($post->article && $post->status == 'publié') {
+                if ($post->article) {
                     array_push($articles, $post->article);
                 }
             }
 
-            return response()->json(ArticleResource::collection($articles));
+            return response()->json([
+                'subject' => new SubjectResource($subject),
+                'articles' => ArticleResource::collection($articles),
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Une erreur est survenue lors de la récupération des articles',

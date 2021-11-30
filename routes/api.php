@@ -46,5 +46,6 @@ Route::get('programmes/presentations', [SubjectController::class, 'programmesPre
 Route::get('newsexpresses', [NewsexpressController::class, 'newsExpress']);
 
 Route::get('regions', [SubjectController::class, 'regions']);
+Route::get('regions/{slug}', [SubjectController::class, 'region']);
 
 Route::get('baners', [BanerController::class, 'baners']);

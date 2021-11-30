@@ -32,8 +32,12 @@ class ArticleController extends Controller
             $articles = Article::latest('articles.created_at')->paginate(15);
         }
 
-        if (Gate::allows('list-mes-articles')) {
+        else if (Gate::allows('list-mes-articles')) {
             $articles = Article::userArticles(Auth::user())->latest('articles.created_at')->paginate(15);
+        }
+
+        else{
+            abort(403);
         }
         try {
             $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
