@@ -52,8 +52,8 @@ class ArticleController extends Controller
     public function create()
     {
         try {
-            $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
-            // $categories = Subject::all();
+            // $categories = Subject::whereType_id(Type::whereTitle('categorie')->first()->id)->get();
+            $categories = Subject::all();
         } catch (\Exception $e) {
             return redirect()->route('subjects.index')->with('error', 'Vous devez créer une catégorie avant de créer un article');
         }
